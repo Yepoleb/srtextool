@@ -1,0 +1,18 @@
+Create output directory if it doesn't exist
+Add flags command
+Autodetect alpha flag
+Add texture data to peg entry?
+Rewrite delete_textures
+Warnings for weird conversions
+Standalone align function to get rid of byteio in shared
+Replace const std::ios::failure& with non const
+Replace std::map constants
+
+Important:
+
+
+
+Rejected:
+
+Implement fix for broken texture size (unable to reproduce)
+Handle truncated file name list (unable to reproduce)
