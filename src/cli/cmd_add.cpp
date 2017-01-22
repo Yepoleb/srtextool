@@ -131,7 +131,7 @@ void update_files(const std::vector<std::string>& dds_filenames,
         set_ios_exceptions(ddsfile);
         try {
             ddsfile.open(dds_filename, OPENMODE_READ);
-        } catch (const std::ios::failure&) {
+        } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to open DDS file: " << dds_filename << std::endl;
             throw exit_error(1);
         }
@@ -147,7 +147,7 @@ void update_files(const std::vector<std::string>& dds_filenames,
             texture_data.resize(texture_size);
             ddsfile.read(texture_data.data(), texture_size);
             ddsfile.close();
-        } catch (const std::ios::failure&) {
+        } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to read DDS file: " << get_stream_error(ddsfile) << std::endl;
             throw exit_error(1);
         } catch (const std::exception& e) {

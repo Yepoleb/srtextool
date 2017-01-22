@@ -125,7 +125,7 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
         set_ios_exceptions(ddsfile);
         try {
             ddsfile.open(dds_filepath, OPENMODE_WRITE);
-        } catch (const std::ios::failure&) {
+        } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to open DDS file for writing: " << dds_filepath << std::endl;
             throw exit_error(1);
         }
@@ -135,7 +135,7 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
         try {
             ddsheader.write(ddsfile);
             ddsfile.write(texture_data.data(), texture_data.size());
-        } catch (const std::ios::failure&) {
+        } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to write DDS file: " << get_stream_error(ddsfile) << std::endl;
             throw exit_error(1);
         } catch (const std::exception& e) {

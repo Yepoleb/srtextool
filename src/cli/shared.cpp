@@ -48,7 +48,7 @@ PegHeader read_headerfile(const std::string& filename)
     set_ios_exceptions(headerfile);
     try {
         headerfile.open(filename, OPENMODE_READ);
-    } catch (const std::ios::failure&) {
+    } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to open header file: " << filename << std::endl;
         throw exit_error(1);
     }
@@ -59,7 +59,7 @@ PegHeader read_headerfile(const std::string& filename)
     try {
         header.read(headerfile);
         headerfile.close();
-    } catch (const std::ios::failure&) {
+    } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to read header: " << get_stream_error(headerfile) << std::endl;
         throw exit_error(1);
     } catch (const std::exception& e) {
@@ -84,7 +84,7 @@ tex_vector_t read_datafile(const std::string& filename, const PegHeader& header)
     set_ios_exceptions(datafile);
     try {
         datafile.open(filename, OPENMODE_READ);
-    } catch (const std::ios::failure&) {
+    } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to open data file: " << filename << std::endl;
         throw exit_error(1);
     }
@@ -97,7 +97,7 @@ tex_vector_t read_datafile(const std::string& filename, const PegHeader& header)
         try {
             datafile.seekg(entry.offset);
             datafile.read(texture_data.data(), entry.data_size);
-        } catch (const std::ios::failure&) {
+        } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to read texture data: " << get_stream_error(datafile) << std::endl;
             throw exit_error(1);
         }
@@ -116,7 +116,7 @@ void write_datafile(const std::string& filename, PegHeader& header,
     set_ios_exceptions(datafile);
     try {
         datafile.open(filename, OPENMODE_WRITE);
-    } catch (const std::ios::failure&) {
+    } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to open data file for writing: " << filename << std::endl;
         throw exit_error(1);
     }
@@ -134,7 +134,7 @@ void write_datafile(const std::string& filename, PegHeader& header,
             datafile_writer.align(header.alignment);
             entry.offset = datafile_writer.tell();
             datafile_writer.write(texture_data.data(), texture_data.size());
-        } catch (const std::ios::failure&) {
+        } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to write data file: " << get_stream_error(datafile) << std::endl;
             throw exit_error(1);
         }
@@ -152,7 +152,7 @@ void write_headerfile(const std::string& filename, PegHeader& header)
     set_ios_exceptions(headerfile);
     try {
         headerfile.open(filename, OPENMODE_WRITE);
-    } catch (const std::ios::failure&) {
+    } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to open header file for writing: " << filename << std::endl;
         throw exit_error(1);
     }
@@ -166,7 +166,7 @@ void write_headerfile(const std::string& filename, PegHeader& header)
     try {
         header.write(headerfile);
         headerfile.close();
-    } catch (const std::ios::failure&) {
+    } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to write header: " << get_stream_error(headerfile) << std::endl;
         throw exit_error(1);
     } catch (const std::exception& e) {
