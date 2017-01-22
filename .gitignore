@@ -1,0 +1,25 @@
+# IDE files
+
+*.workspace
+*.project
+.codelite
+.clang
+
+*.sln
+*.vcproj
+
+# Build files
+
+Makefile
+*.mk
+
+# Build directories
+
+*build
+Debug
+Release
+
+# Project specific
+
+srtextool.*
+
