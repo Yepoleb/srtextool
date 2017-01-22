@@ -4,6 +4,7 @@ set -e # Exit if something fails
 
 SOURCE_DIR="$(pwd)"
 BUILD_DIR="${SOURCE_DIR}/build"
+VERSION="1.0.0"
 
 CMAKE_OPTIONS="-DSTATIC_BUILD=ON -DCMAKE_BUILD_TYPE=Release"
 
@@ -21,9 +22,9 @@ do
 done
 
 cd "${BUILD_DIR}"
-rm -f "srtextool_lin.tar.gz srtextool_win.zip"
+rm -f "srtextool-${VERSION}-lin.tar.gz srtextool-${VERSION}-win.zip"
 echo "Packaging Linux binaries"
-tar -czf "srtextool_lin.tar.gz" "lin32/srtextool" "lin64/srtextool"
+tar -czf "srtextool-${VERSION}-lin.tar.gz" "lin32/srtextool" "lin64/srtextool"
 echo "Packaging Windows binaries"
-zip "srtextool_win.zip" "win32/srtextool.exe" "win64/srtextool.exe"
+zip "srtextool-${VERSION}-win.zip" "win32/srtextool.exe" "win64/srtextool.exe"
 
