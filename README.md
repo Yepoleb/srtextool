@@ -71,9 +71,9 @@ Using the CMake GUI:
 
 ### Cross compiling for Windows
 
-First make sure the paths in `cmake/windows-toolchain.cmake` are correct. Then
+First make sure the paths in `cmake/toolchain-win32.cmake` are correct. Then
 do the same as for [Linux](#linux), but replace `cmake ..` with
-`cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain-w32.cmake`
+`cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain-win32.cmake`
 
 ## Credits
 
