@@ -42,6 +42,10 @@ srtextool l professorgenki.cpeg_pc
 srtextool c professorgenki.cpeg_pc
 ```
 
+## Supported Versions
+
+Saints Row: The Third and Saints Row IV
+
 ## Dependencies
 
 * [CMake]
