@@ -66,16 +66,20 @@ Using the CMake GUI:
 * Select `...\srtextool` as the source location
 * Select `...\srtextool\build` as the binary location
 * Run "Configure" and "Generate"
-* Open the project file in `build` in your IDE or run make, ninja, whatever you used as the generator target
+* Open the project file in `build` in your IDE or run make, ninja, whatever
+  you used as the generator target
 
 ### Cross compiling for Windows
 
-First make sure the paths in `cmake/windows-toolchain.cmake` are correct. Then do the same as for [Linux](#linux), but replace `cmake ..` with `cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/windows-toolchain.cmake`
+First make sure the paths in `cmake/windows-toolchain.cmake` are correct. Then
+do the same as for [Linux](#linux), but replace `cmake ..` with
+`cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain-w32.cmake`
 
 ## Credits
 
 * \[V\] Knobby for providing the headers of the [peg file format]
-* Scanti for writing the [SR3 Texture Utilities], which were a great starting point
+* Scanti for writing the [SR3 Texture Utilities], which were a great starting
+  point
 
 ## License
 
