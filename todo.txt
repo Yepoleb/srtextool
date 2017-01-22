@@ -3,10 +3,9 @@ Add flags command
 Autodetect alpha flag
 Add texture data to peg entry?
 Rewrite delete_textures
-Warnings for weird conversions
+Warnings for weird conversions, verbose option
 Standalone align function to get rid of byteio in shared
-Replace const std::ios::failure& with non const
-Replace std::map constants
+Reduce number of symbols
 
 Important:
 
