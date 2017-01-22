@@ -9,7 +9,6 @@
 #include "../headerfile.hpp"
 #include "../path.hpp"
 #include "../errors.hpp"
-#include "../byteio.hpp"
 #include "shared.hpp"
 
 std::string get_data_filename(const std::string& header_filename)
@@ -35,6 +34,15 @@ const char* get_stream_error(const std::ios& stream)
         return "Unknown error";
     } else {
         return "No error";
+    }
+}
+
+void align(std::ostream& stream, std::streamoff alignment)
+{
+    std::streampos current_pos = stream.tellp();
+    std::streamoff to_align = current_pos % alignment;
+    if (to_align > 0) {
+        stream.seekp(to_align, std::ios::cur);
     }
 }
 
@@ -121,8 +129,6 @@ void write_datafile(const std::string& filename, PegHeader& header,
         throw exit_error(1);
     }
 
-    ByteWriter datafile_writer(datafile);
-
     for (size_t entry_i = 0; entry_i < header.total_entries; entry_i++) {
 
         PegEntry& entry = header.entries.at(entry_i);
@@ -131,9 +137,9 @@ void write_datafile(const std::string& filename, PegHeader& header,
         // Write entry
 
         try {
-            datafile_writer.align(header.alignment);
-            entry.offset = datafile_writer.tell();
-            datafile_writer.write(texture_data.data(), texture_data.size());
+            align(datafile, header.alignment);
+            entry.offset = datafile.tellp();
+            datafile.write(texture_data.data(), texture_data.size());
         } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to write data file: " << get_stream_error(datafile) << std::endl;
             throw exit_error(1);
