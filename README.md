@@ -1,6 +1,6 @@
 # SR Textool
 
-Tool for converting DDS textures to and from the Volition bitmap format.
+Tool for converting DDS textures to and from the Volition bitmap format. Supports Saints Row: The Third and Saints Row IV
 
 ## Usage
 
@@ -41,10 +41,6 @@ srtextool l professorgenki.cpeg_pc
 ```
 srtextool c professorgenki.cpeg_pc
 ```
-
-## Supported Versions
-
-Saints Row: The Third and Saints Row IV
 
 ## Dependencies
 
