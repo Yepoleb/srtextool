@@ -42,9 +42,7 @@ const uint16_t BM_F_HIGH_MIP_ELIGIBLE = 0x800; // bitmap is eligible for linking
 const uint16_t BM_F_LINKED_TO_HIGH_MIP = 0x1000; // bitmap is currently linked to a high mip (runtime only flag)
 const uint16_t BM_F_PERM_REGISTERED = 0x2000; // bitmap is permanently registered. used on the PC so d3d becomes the permanent owner of the texture memory.
 
-extern const std::unordered_map<TextureFormat, const char*> FORMAT_NAMES;
-extern const std::vector<const char*> ENTRY_FLAG_NAMES;
-
+const char* get_format_name(TextureFormat fmt);
 std::string get_entry_flag_names(uint16_t flags);
 uint32_t calc_compressed_size(uint32_t width, uint32_t height, uint32_t blocksize);
 

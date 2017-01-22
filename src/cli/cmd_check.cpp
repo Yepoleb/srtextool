@@ -120,7 +120,7 @@ bool check_textures(const PegHeader& header, const tex_vector_t& textures)
 
         if (entry.flags & BM_F_ALPHA) {
             failed = true;
-            std::cerr << "Alpha tex " << FORMAT_NAMES.at(entry.bm_fmt) << std::endl;
+            std::cerr << "Alpha tex " << get_format_name(entry.bm_fmt) << std::endl;
         }
     }
 

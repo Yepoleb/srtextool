@@ -84,7 +84,7 @@ std::string list_header(const PegHeader& header)
     for (const PegEntry& entry : header.entries) {
         stream << "Name: " << entry.filename << std::endl;
         stream << "Dimensions: " << entry.width << "x" << entry.height << std::endl;
-        stream << "Format: " << FORMAT_NAMES.at(entry.bm_fmt) << std::endl;
+        stream << "Format: " << get_format_name(entry.bm_fmt) << std::endl;
         if (entry.flags) {
             stream << "Flags: " << get_entry_flag_names(entry.flags) << std::endl;
         }

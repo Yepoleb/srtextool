@@ -11,9 +11,6 @@ const uint32_t FOURCC_DDS = MAKEFOURCC('D', 'D', 'S', ' ');
 const size_t DDS_HEADER_SIZE = 124;
 const size_t DDS_PIXELFORMAT_SIZE = 32;
 
-extern const DDSPixelformat PIXELFORMATS[];
-extern const size_t PIXELFORMATS_COUNT;
-
 // Pixelformat flags
 // Source: Ddraw.h
 

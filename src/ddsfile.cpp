@@ -36,13 +36,13 @@ const DDSPixelformat PIXELFORMATS[] = {
     {32, DDPF_ALPHA, 0, 8, 0x00, 0x00, 0x00, 0xff}
 };
 
-const size_t PIXELFORMATS_COUNT = ARRAYSIZE(PIXELFORMATS);
+const size_t PIXELFORMATS_SIZE = ARRAYSIZE(PIXELFORMATS);
 
 DDSPixelformat get_pixelformat(TextureFormat fmt)
 {
     // Enums start at 400
     int index = static_cast<int>(fmt) - 400;
-    if (!(0 <= index && index < static_cast<int>(PIXELFORMATS_COUNT))) {
+    if (!(0 <= index && index < static_cast<int>(PIXELFORMATS_SIZE))) {
         throw field_error("format", std::to_string(static_cast<int>(fmt)));
     }
 
@@ -51,7 +51,7 @@ DDSPixelformat get_pixelformat(TextureFormat fmt)
 
 TextureFormat detect_pixelformat(const DDSPixelformat& ddspf)
 {
-    for (size_t i = 0; i < PIXELFORMATS_COUNT; i++) {
+    for (size_t i = 0; i < PIXELFORMATS_SIZE; i++) {
         const DDSPixelformat& ddspf_ref = PIXELFORMATS[i];
 
         if (ddspf.dwFlags != ddspf_ref.dwFlags) continue;

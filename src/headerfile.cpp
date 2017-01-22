@@ -1,32 +1,31 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string>
-#include <vector>
 #include <utility> // std::move
 #include <algorithm> // std::max
-#include <unordered_map>
+#include <cassert>
 
 #include "ddsfile.hpp"
 #include "byteio.hpp"
 #include "errors.hpp"
 #include "headerfile.hpp"
 
-const std::unordered_map<TextureFormat, const char*> FORMAT_NAMES = {
-    {TextureFormat::PC_UNKNOWN, "UNKNOWN"},
-    {TextureFormat::PC_DXT1, "DXT1"},
-    {TextureFormat::PC_DXT3, "DXT3"},
-    {TextureFormat::PC_DXT5, "DXT5"},
-    {TextureFormat::PC_565, "R5G6B5"},
-    {TextureFormat::PC_1555, "A1R5G5B5"},
-    {TextureFormat::PC_4444, "A4R4G4B4"},
-    {TextureFormat::PC_888, "R8G8B8"},
-    {TextureFormat::PC_8888, "A8R8G8B8"},
-    {TextureFormat::PC_16_DUDV, "V8U8"},
-    {TextureFormat::PC_16_DOT3_COMPRESSED, "CxV8U8"},
-    {TextureFormat::PC_A8, "A8"},
+const char* FORMAT_NAMES[] = {
+    "DXT1",
+    "DXT3",
+    "DXT5",
+    "R5G6B5",
+    "A1R5G5B5",
+    "A4R4G4B4",
+    "R8G8B8",
+    "A8R8G8B8",
+    "V8U8",
+    "CxV8U8",
+    "A8"
 };
+const size_t FORMAT_NAMES_SIZE = ARRAYSIZE(FORMAT_NAMES);
 
-const std::vector<const char*> ENTRY_FLAG_NAMES = {
+const char* ENTRY_FLAG_NAMES[] = {
     "ALPHA",
     "NONPOW2",
     "ALPHA_TEST",
@@ -42,17 +41,30 @@ const std::vector<const char*> ENTRY_FLAG_NAMES = {
     "LINKED_TO_HIGH_MIP",
     "PERM_REGISTERED"
 };
+const size_t ENTRY_FLAG_NAMES_SIZE = ARRAYSIZE(ENTRY_FLAG_NAMES);
+
+const char* get_format_name(TextureFormat fmt)
+{
+    // Enums start at 400
+    int index = static_cast<int>(fmt) - 400;
+    if (!(0 <= index && index < static_cast<int>(FORMAT_NAMES_SIZE))) {
+        return "UNKNOWN";
+    }
+
+    return FORMAT_NAMES[index];
+}
 
 std::string get_entry_flag_names(uint16_t flags)
 {
     std::string names;
-    for (size_t i = 0; i < sizeof(flags) * 8; i++) {
+    for (size_t i = 0; i < ENTRY_FLAG_NAMES_SIZE; i++) {
         int mask = 1 << i;
         if (flags & mask) {
             if (!names.empty()) {
                 names += ", ";
             }
-            names += ENTRY_FLAG_NAMES.at(i);
+            assert(0 <= i && i < ENTRY_FLAG_NAMES_SIZE);
+            names += ENTRY_FLAG_NAMES[i];
         }
     }
     return names;
