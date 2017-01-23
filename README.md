@@ -2,6 +2,7 @@
 
 Tool for converting DDS textures to and from the Volition bitmap format. Supports Saints Row: The Third and Saints Row IV
 
+
 ## Usage
 
 ### Help
@@ -24,6 +25,12 @@ srtextool x professorgenki.cpeg_pc -o extracted
 srtextool a professorgenki.cpeg_pc professorgenki_sm_n.tga.dds new_texture.tga.dds
 ```
 
+Linux only:
+
+```
+srtextool a professorgenki.cpeg_pc *.dds
+```
+
 ### Delete Textures
 
 ```
@@ -42,11 +49,13 @@ srtextool l professorgenki.cpeg_pc
 srtextool c professorgenki.cpeg_pc
 ```
 
+
 ## Dependencies
 
 * [CMake]
 * Compiler with good C++11 support
 * Taywee's [args], which is included in `external` with slight modifications
+
 
 ## Building
 
@@ -75,11 +84,13 @@ First make sure the paths in `cmake/toolchain-win32.cmake` are correct. Then
 do the same as for [Linux](#linux), but replace `cmake ..` with
 `cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain-win32.cmake`
 
+
 ## Credits
 
 * \[V\] Knobby for providing the headers of the [peg file format]
 * Scanti for writing the [SR3 Texture Utilities], which were a great starting
   point
+
 
 ## License
 
