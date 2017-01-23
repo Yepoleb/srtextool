@@ -63,7 +63,7 @@ struct PegEntry
     uint16_t anim_tiles_height = 1;
     uint16_t num_frames = 1; // Not used by engine. Always 1.
     uint16_t flags = 0; // Various flags for texture. (See BM_F_* constants).
-    std::string filename; // Originally a char* to the filename. Always 0 on disk.
+    uint64_t filename_p = 0; // Originally a char* to the filename. Always 0 on disk.
     uint16_t pal_size = 0; // Not used by engine. Always 0.
     uint8_t fps = 1; // Not used by engine. Always 1.
     uint8_t mip_levels = 1; // Number of mipmaps in texture + 1 for the base image.
@@ -72,6 +72,9 @@ struct PegEntry
     uint64_t prev; // Pointer to previous entry.
     uint32_t cache[2] = {}; // Generic texture caching data, used differently on different platforms
     // 8 bytes padding
+
+    std::string filename;
+    std::vector<char> data;
 };
 
 const size_t PEGHEADER_BINSIZE = 24;

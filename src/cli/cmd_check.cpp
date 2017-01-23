@@ -9,7 +9,7 @@
 #include "../errors.hpp"
 #include "shared.hpp"
 
-bool check_textures(const PegHeader& header, const tex_vector_t& textures);
+bool check_textures(const PegHeader& header);
 
 static const char* HELP_CHECK =
 R"(
@@ -62,9 +62,9 @@ int cmd_check(std::string progname,
 
         try {
             PegHeader header = read_headerfile(header_filename);
-            tex_vector_t textures = read_datafile(data_filename, header);
+            read_datafile(data_filename, header);
 
-            bool failed = check_textures(header, textures);
+            bool failed = check_textures(header);
             if (failed) {
                 std::cout << "Failed: " << header_filename << std::endl;
             }
@@ -84,26 +84,28 @@ int cmd_check(std::string progname,
         failed = true; \
     }
 
-bool check_textures(const PegHeader& header, const tex_vector_t& textures)
+bool check_textures(const PegHeader& header)
 {
     bool failed = false;
 
     CHECK_FIELD(header.dir_block_size == header.size());
-    size_t combined_size = 0;
-    for (const std::vector<char>& tex : textures) {
-        combined_size += tex.size();
+    size_t textures_size_min = 0;
+    size_t textures_size_max;
+    for (const PegEntry& entry : header.entries) {
+        textures_size_min += entry.data_size;
     }
-    CHECK_FIELD(header.data_block_size >= combined_size);
-    CHECK_FIELD(header.data_block_size <= combined_size + textures.size() * header.alignment);
+    textures_size_max = textures_size_min + header.entries.size() * header.alignment;
+    CHECK_FIELD(header.data_block_size >= textures_size_min);
+    CHECK_FIELD(header.data_block_size <= textures_size_max);
+
     //CHECK_FIELD(header.num_bitmaps > 0);
-    CHECK_FIELD(header.num_bitmaps == textures.size());
+    CHECK_FIELD(header.num_bitmaps == header.entries.size());
     CHECK_FIELD(header.num_bitmaps == header.total_entries);
     //CHECK_FIELD(header.total_entries > 0)
     CHECK_FIELD(header.flags == 0);
     CHECK_FIELD(header.alignment == 16);
 
-    for (size_t entry_i = 0; entry_i < header.total_entries; entry_i++) {
-        const PegEntry& entry = header.entries.at(entry_i);
+    for (const PegEntry& entry : header.entries) {
         CHECK_FIELD(entry.offset < header.data_block_size);
         CHECK_FIELD(entry.offset + entry.data_size <= header.data_block_size);
         CHECK_FIELD(entry.width > 0);
@@ -112,16 +114,14 @@ bool check_textures(const PegHeader& header, const tex_vector_t& textures)
         CHECK_FIELD(TextureFormat::PC_A8 >= entry.bm_fmt);
         CHECK_FIELD(entry.pal_fmt == 0);
         CHECK_FIELD(entry.num_frames == 1);
-        CHECK_FIELD(!entry.filename.empty());
+        CHECK_FIELD(entry.filename_p == 0);
         CHECK_FIELD(entry.pal_size == 0);
         CHECK_FIELD(entry.fps == 1);
         CHECK_FIELD(entry.mip_levels >= 1);
         CHECK_FIELD(entry.data_size >= 0);
 
-        if (entry.flags & BM_F_ALPHA) {
-            failed = true;
-            std::cerr << "Alpha tex " << get_format_name(entry.bm_fmt) << std::endl;
-        }
+        CHECK_FIELD(!entry.filename.empty());
+        CHECK_FIELD(!entry.data.empty());
     }
 
     if (header.total_entries > 0) {

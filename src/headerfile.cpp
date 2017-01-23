@@ -10,7 +10,7 @@
 #include "errors.hpp"
 #include "headerfile.hpp"
 
-const char* FORMAT_NAMES[] = {
+static const char* FORMAT_NAMES[] = {
     "DXT1",
     "DXT3",
     "DXT5",
@@ -25,7 +25,7 @@ const char* FORMAT_NAMES[] = {
 };
 const size_t FORMAT_NAMES_SIZE = ARRAYSIZE(FORMAT_NAMES);
 
-const char* ENTRY_FLAG_NAMES[] = {
+static const char* ENTRY_FLAG_NAMES[] = {
     "ALPHA",
     "NONPOW2",
     "ALPHA_TEST",
@@ -206,7 +206,7 @@ void PegEntry::read(std::istream& stream)
     anim_tiles_height = reader.readU16();
     num_frames = reader.readU16();
     flags = reader.readU16();
-    reader.readS64(); // skip filename because it's in a different location
+    filename_p = reader.readS64();
     pal_size = reader.readU16();
     fps = reader.readU8();
     mip_levels = reader.readU8();
@@ -231,7 +231,7 @@ void PegEntry::write(std::ostream& stream) const
     writer.writeU16(anim_tiles_height);
     writer.writeU16(num_frames);
     writer.writeU16(flags);
-    writer.writeS64(0); // filename is written at the end
+    writer.writeS64(filename_p);
     writer.writeU16(pal_size);
     writer.writeU8(fps);
     writer.writeU8(mip_levels);

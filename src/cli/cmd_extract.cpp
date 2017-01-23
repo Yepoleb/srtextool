@@ -14,7 +14,7 @@
 #include "shared.hpp"
 
 void write_dds(const std::string& output_dir, const PegHeader& header,
-    const tex_vector_t& textures, const std::vector<std::string>& texture_names);
+    const std::vector<std::string>& texture_names);
 
 static const char* HELP_EXTRACT =
 R"(
@@ -74,9 +74,9 @@ int cmd_extract(std::string progname,
 
     try {
         PegHeader header = read_headerfile(header_filename);
-        tex_vector_t textures = read_datafile(data_filename, header);
+        read_datafile(data_filename, header);
 
-        write_dds(output_dir, header, textures, texture_names);
+        write_dds(output_dir, header, texture_names);
     } catch (const exit_error& e) {
         return e.status;
     }
@@ -85,12 +85,9 @@ int cmd_extract(std::string progname,
 }
 
 void write_dds(const std::string& output_dir, const PegHeader& header,
-    const tex_vector_t& textures, const std::vector<std::string>& texture_names)
+    const std::vector<std::string>& texture_names)
 {
-    for (size_t entry_i = 0; entry_i < header.total_entries; entry_i++) {
-
-        PegEntry entry = header.entries.at(entry_i);
-        std::vector<char> texture_data = textures.at(entry_i);
+    for (const PegEntry& entry : header.entries) {
 
         // Filter entries, skip if names are empty
 
@@ -134,7 +131,7 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
 
         try {
             ddsheader.write(ddsfile);
-            ddsfile.write(texture_data.data(), texture_data.size());
+            ddsfile.write(entry.data.data(), entry.data.size());
         } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to write DDS file: " << get_stream_error(ddsfile) << std::endl;
             throw exit_error(1);

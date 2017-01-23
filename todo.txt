@@ -1,11 +1,10 @@
 Create output directory if it doesn't exist
 Add flags command
 Autodetect alpha flag
-Add texture data to peg entry?
-Rewrite delete_textures
 Warnings for weird conversions, verbose option
-Standalone align function to get rid of byteio in shared
-Reduce number of symbols
+Info for updated, deleted files
+Remove duplicated cli code
+Add header for cli commands
 
 Important:
 

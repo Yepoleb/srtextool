@@ -13,8 +13,7 @@
 #include "../errors.hpp"
 #include "shared.hpp"
 
-void update_files(const std::vector<std::string>& dds_filenames,
-    PegHeader& header, tex_vector_t& textures);
+void update_files(const std::vector<std::string>& dds_filenames, PegHeader& header);
 size_t get_file_size(std::istream& stream);
 
 const size_t FOURCC_SIZE = 4;
@@ -94,11 +93,11 @@ int cmd_add(std::string progname,
 
     try {
         PegHeader header = read_headerfile(header_in_filename);
-        tex_vector_t textures = read_datafile(data_in_filename, header);
+        read_datafile(data_in_filename, header);
 
-        update_files(dds_filenames, header, textures);
+        update_files(dds_filenames, header);
 
-        write_datafile(data_out_filename, header, textures);
+        write_datafile(data_out_filename, header);
         write_headerfile(header_out_filename, header);
     } catch (const exit_error& e) {
         return e.status;
@@ -107,8 +106,7 @@ int cmd_add(std::string progname,
     return 0;
 }
 
-void update_files(const std::vector<std::string>& dds_filenames,
-    PegHeader& header, tex_vector_t& textures)
+void update_files(const std::vector<std::string>& dds_filenames, PegHeader& header)
 {
     for (const std::string& dds_filename : dds_filenames) {
 
@@ -139,13 +137,13 @@ void update_files(const std::vector<std::string>& dds_filenames,
         // Read header and texture data
 
         DDSHeader ddsheader;
-        size_t texture_size;
-        std::vector<char> texture_data;
         try {
             ddsheader.read(ddsfile);
-            texture_size = get_file_size(ddsfile) - DDS_HEADER_SIZE - FOURCC_SIZE;
-            texture_data.resize(texture_size);
-            ddsfile.read(texture_data.data(), texture_size);
+
+            size_t data_size = get_file_size(ddsfile) - DDS_HEADER_SIZE - FOURCC_SIZE;
+            entry.data_size = static_cast<uint32_t>(data_size);
+            entry.data.resize(data_size);
+            ddsfile.read(entry.data.data(), data_size);
             ddsfile.close();
         } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to read DDS file: " << get_stream_error(ddsfile) << std::endl;
@@ -163,16 +161,13 @@ void update_files(const std::vector<std::string>& dds_filenames,
             std::cerr << "[Error] Failed to convert DDS to PEG header: " << e.what() << std::endl;
             throw exit_error(1);
         }
-        entry.data_size = static_cast<uint32_t>(texture_size);
 
         // Insert new header and texture
 
         if (existing_index != SIZE_MAX) {
             header.entries.at(existing_index) = std::move(entry);
-            textures.at(existing_index) = std::move(texture_data);
         } else {
-            header.add_entry(entry);
-            textures.push_back(std::move(texture_data));
+            header.add_entry(std::move(entry));
         }
     }
 }

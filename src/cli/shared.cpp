@@ -78,78 +78,6 @@ PegHeader read_headerfile(const std::string& filename)
     return header;
 }
 
-tex_vector_t read_datafile(const std::string& filename, const PegHeader& header)
-{
-    tex_vector_t textures;
-
-    if (header.total_entries == 0) {
-        return textures;
-    }
-
-    // Open data file
-
-    std::ifstream datafile;
-    set_ios_exceptions(datafile);
-    try {
-        datafile.open(filename, OPENMODE_READ);
-    } catch (std::ios::failure) {
-        std::cerr << "[Error] Failed to open data file: " << filename << std::endl;
-        throw exit_error(1);
-    }
-
-    for (const PegEntry& entry : header.entries) {
-
-        // Read texture data
-
-        std::vector<char> texture_data(entry.data_size);
-        try {
-            datafile.seekg(entry.offset);
-            datafile.read(texture_data.data(), entry.data_size);
-        } catch (std::ios::failure) {
-            std::cerr << "[Error] Failed to read texture data: " << get_stream_error(datafile) << std::endl;
-            throw exit_error(1);
-        }
-        textures.push_back(std::move(texture_data));
-    }
-
-    return textures;
-}
-
-void write_datafile(const std::string& filename, PegHeader& header,
-    tex_vector_t& textures)
-{
-    // Open data file
-
-    std::ofstream datafile;
-    set_ios_exceptions(datafile);
-    try {
-        datafile.open(filename, OPENMODE_WRITE);
-    } catch (std::ios::failure) {
-        std::cerr << "[Error] Failed to open data file for writing: " << filename << std::endl;
-        throw exit_error(1);
-    }
-
-    for (size_t entry_i = 0; entry_i < header.total_entries; entry_i++) {
-
-        PegEntry& entry = header.entries.at(entry_i);
-        const std::vector<char>& texture_data = textures.at(entry_i);
-
-        // Write entry
-
-        try {
-            align(datafile, header.alignment);
-            entry.offset = datafile.tellp();
-            datafile.write(texture_data.data(), texture_data.size());
-        } catch (std::ios::failure) {
-            std::cerr << "[Error] Failed to write data file: " << get_stream_error(datafile) << std::endl;
-            throw exit_error(1);
-        }
-    }
-
-    header.data_block_size = static_cast<uint32_t>(datafile.tellp());
-    datafile.close();
-}
-
 void write_headerfile(const std::string& filename, PegHeader& header)
 {
     // Open header file
@@ -179,4 +107,68 @@ void write_headerfile(const std::string& filename, PegHeader& header)
         std::cerr << "[Error] Failed to write header: " << e.what() << std::endl;
         throw exit_error(1);
     }
+}
+
+void read_datafile(const std::string& filename, PegHeader& header)
+{
+    if (header.total_entries == 0) {
+        return;
+    }
+
+    // Open data file
+
+    std::ifstream datafile;
+    set_ios_exceptions(datafile);
+    try {
+        datafile.open(filename, OPENMODE_READ);
+    } catch (std::ios::failure) {
+        std::cerr << "[Error] Failed to open data file: " << filename << std::endl;
+        throw exit_error(1);
+    }
+
+    for (PegEntry& entry : header.entries) {
+
+        // Read texture data
+
+        std::vector<char> texture_data(entry.data_size);
+        try {
+            datafile.seekg(entry.offset);
+            datafile.read(texture_data.data(), entry.data_size);
+        } catch (std::ios::failure) {
+            std::cerr << "[Error] Failed to read texture data: " << get_stream_error(datafile) << std::endl;
+            throw exit_error(1);
+        }
+        entry.data = std::move(texture_data);
+    }
+}
+
+void write_datafile(const std::string& filename, PegHeader& header)
+{
+    // Open data file
+
+    std::ofstream datafile;
+    set_ios_exceptions(datafile);
+    try {
+        datafile.open(filename, OPENMODE_WRITE);
+    } catch (std::ios::failure) {
+        std::cerr << "[Error] Failed to open data file for writing: " << filename << std::endl;
+        throw exit_error(1);
+    }
+
+    for (PegEntry& entry : header.entries) {
+
+        // Write entry
+
+        try {
+            align(datafile, header.alignment);
+            entry.offset = datafile.tellp();
+            datafile.write(entry.data.data(), entry.data.size());
+        } catch (std::ios::failure) {
+            std::cerr << "[Error] Failed to write data file: " << get_stream_error(datafile) << std::endl;
+            throw exit_error(1);
+        }
+    }
+
+    header.data_block_size = static_cast<uint32_t>(datafile.tellp());
+    datafile.close();
 }

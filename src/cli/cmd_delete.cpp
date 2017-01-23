@@ -10,8 +10,7 @@
 #include "../errors.hpp"
 #include "shared.hpp"
 
-void delete_textures(const std::vector<std::string>& texture_names,
-    PegHeader& header, tex_vector_t& textures);
+void delete_textures(const std::vector<std::string>& texture_names, PegHeader& header);
 
 static const char* HELP_DELETE =
 R"(
@@ -88,11 +87,11 @@ int cmd_delete(std::string progname,
 
     try {
         PegHeader header = read_headerfile(header_in_filename);
-        tex_vector_t textures = read_datafile(data_in_filename, header);
+        read_datafile(data_in_filename, header);
 
-        delete_textures(texture_names, header, textures);
+        delete_textures(texture_names, header);
 
-        write_datafile(data_out_filename, header, textures);
+        write_datafile(data_out_filename, header);
         write_headerfile(header_out_filename, header);
     } catch (const exit_error& e) {
         return e.status;
@@ -101,16 +100,9 @@ int cmd_delete(std::string progname,
     return 0;
 }
 
-void delete_textures(const std::vector<std::string>& texture_names,
-    PegHeader& header, tex_vector_t& textures)
+void delete_textures(const std::vector<std::string>& texture_names, PegHeader& header)
 {
     for (const std::string& name : texture_names) {
-        size_t index = header.entry_index(name);
-        if (index != SIZE_MAX) {
-            header.entries.erase(header.entries.begin() + index);
-            textures.erase(textures.begin() + index);
-            header.num_bitmaps--;
-            header.total_entries--;
-        }
+        header.remove_entry(name);
     }
 }
