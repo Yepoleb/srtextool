@@ -20,7 +20,7 @@ int cmd_list(std::string progname, std::vector<std::string>::const_iterator begi
 
 static const char* HELP_MAIN =
 R"(
-SR Textool 1.0.0
+SR Textool 1.0.1
 
 Tool for converting DDS textures to and from the Volition bitmap format.
 

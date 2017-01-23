@@ -4,7 +4,7 @@ set -e # Exit if something fails
 
 SOURCE_DIR="$(pwd)"
 BUILD_DIR="${SOURCE_DIR}/build"
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 CMAKE_OPTIONS="-DSTATIC_BUILD=ON -DCMAKE_BUILD_TYPE=Release"
 
