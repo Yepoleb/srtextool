@@ -22,12 +22,14 @@ static const char* HELP_ADD =
 R"(
 Adds textures to a container or updates them if they already exist.
 
-Usage: % [options] <header> <files...>
+Usage: % [options] <header> [files...]
 
 Options:
 
   -h, --help                        Display this help menu
   -o [output], --output=[output]    Directory to write the new container to
+  -i [input], --input=[input]       Directory to update all existing textures
+                                    from
   header                            Header file ending with cvbm_pc or cpeg_pc
   files                             Files to add or update
 
@@ -43,6 +45,7 @@ int cmd_add(std::string progname,
     args::Positional<std::string> header_arg(parser, "header", "");
     args::PositionalList<std::string> files_arg(parser, "files", "");
     args::ValueFlag<std::string> output_arg(parser, "output", "", {'o', "output"});
+    args::ValueFlag<std::string> input_arg(parser, "input", "", {'i', "input"});
 
     try {
         parser.ParseArgs(beginargs, endargs);
@@ -62,9 +65,14 @@ int cmd_add(std::string progname,
         std::cerr << help_format(HELP_ADD, progname);
         return 1;
     }
-    if (!files_arg) {
-        std::cerr << "[Error] Files argument is missing" << std::endl;
-        std::cerr << parser;
+    if (!(files_arg || input_arg)) {
+        std::cerr << "[Error] Files or input argument is missing" << std::endl;
+        std::cerr << help_format(HELP_ADD, progname);
+        return 1;
+    }
+    if (files_arg && input_arg) {
+        std::cerr << "[Error] Can't use files and input argument at the same time" << std::endl;
+        std::cerr << help_format(HELP_ADD, progname);
         return 1;
     }
 
@@ -89,12 +97,27 @@ int cmd_add(std::string progname,
         data_out_filename = data_in_filename;
     }
 
-    std::vector<std::string> dds_filenames = args::get(files_arg);
+    PegHeader header;
 
     try {
-        PegHeader header = read_headerfile(header_in_filename);
+        header = read_headerfile(header_in_filename);
         read_datafile(data_in_filename, header);
+    } catch (const exit_error& e) {
+        return e.status;
+    }
 
+    std::vector<std::string> dds_filenames;
+    if (files_arg) {
+        dds_filenames = args::get(files_arg);
+    } else {
+        std::string input_dir = args::get(input_arg);
+        for (const PegEntry& entry : header.entries) {
+            std::string filename = path::join(input_dir, entry.filename + ".dds");
+            dds_filenames.push_back(filename);
+        }
+    }
+
+    try {
         update_files(dds_filenames, header);
 
         write_datafile(data_out_filename, header);

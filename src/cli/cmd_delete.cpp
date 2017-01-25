@@ -58,7 +58,7 @@ int cmd_delete(std::string progname,
     }
     if (!textures_arg) {
         std::cerr << "[Error] Textures argument is missing" << std::endl;
-        std::cerr << parser;
+        std::cerr << help_format(HELP_DELETE, progname);
         return 1;
     }
 

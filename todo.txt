@@ -5,10 +5,13 @@ Warnings for weird conversions, verbose option
 Info for updated, deleted files
 Remove duplicated cli code
 Add header for cli commands
+Check texture sizes
+Status information when extracting
+Drag and drop batch files
 
 Important:
 
-
+Fix crash on windows when add file doesn't exist
 
 Rejected:
 
