@@ -11,6 +11,7 @@
 #include "../ddsfile.hpp"
 #include "../path.hpp"
 #include "../errors.hpp"
+#include "../gcc/abi_fix.hpp"
 #include "shared.hpp"
 
 void write_dds(const std::string& output_dir, const PegHeader& header,
@@ -121,7 +122,9 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
         std::ofstream ddsfile;
         set_ios_exceptions(ddsfile);
         try {
+            GCC_ABI_WORKAROUND_START
             ddsfile.open(dds_filepath, OPENMODE_WRITE);
+            GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to open DDS file for writing: " << dds_filepath << std::endl;
             throw exit_error(1);
@@ -130,8 +133,10 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
         // Write DDS file
 
         try {
+            GCC_ABI_WORKAROUND_START
             ddsheader.write(ddsfile);
             ddsfile.write(entry.data.data(), entry.data.size());
+            GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to write DDS file: " << get_stream_error(ddsfile) << std::endl;
             throw exit_error(1);

@@ -9,6 +9,7 @@
 #include "../headerfile.hpp"
 #include "../path.hpp"
 #include "../errors.hpp"
+#include "../gcc/abi_fix.hpp"
 #include "shared.hpp"
 
 std::string get_data_filename(const std::string& header_filename)
@@ -55,7 +56,9 @@ PegHeader read_headerfile(const std::string& filename)
     std::ifstream headerfile;
     set_ios_exceptions(headerfile);
     try {
+        GCC_ABI_WORKAROUND_START
         headerfile.open(filename, OPENMODE_READ);
+        GCC_ABI_WORKAROUND_END
     } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to open header file: " << filename << std::endl;
         throw exit_error(1);
@@ -65,8 +68,10 @@ PegHeader read_headerfile(const std::string& filename)
 
     PegHeader header;
     try {
+        GCC_ABI_WORKAROUND_START
         header.read(headerfile);
         headerfile.close();
+        GCC_ABI_WORKAROUND_END
     } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to read header: " << get_stream_error(headerfile) << std::endl;
         throw exit_error(1);
@@ -85,7 +90,9 @@ void write_headerfile(const std::string& filename, PegHeader& header)
     std::ofstream headerfile;
     set_ios_exceptions(headerfile);
     try {
+        GCC_ABI_WORKAROUND_START
         headerfile.open(filename, OPENMODE_WRITE);
+        GCC_ABI_WORKAROUND_END
     } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to open header file for writing: " << filename << std::endl;
         throw exit_error(1);
@@ -98,8 +105,10 @@ void write_headerfile(const std::string& filename, PegHeader& header)
     // Write header
 
     try {
+        GCC_ABI_WORKAROUND_START
         header.write(headerfile);
         headerfile.close();
+        GCC_ABI_WORKAROUND_END
     } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to write header: " << get_stream_error(headerfile) << std::endl;
         throw exit_error(1);
@@ -120,7 +129,9 @@ void read_datafile(const std::string& filename, PegHeader& header)
     std::ifstream datafile;
     set_ios_exceptions(datafile);
     try {
+        GCC_ABI_WORKAROUND_START
         datafile.open(filename, OPENMODE_READ);
+        GCC_ABI_WORKAROUND_END
     } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to open data file: " << filename << std::endl;
         throw exit_error(1);
@@ -132,8 +143,10 @@ void read_datafile(const std::string& filename, PegHeader& header)
 
         std::vector<char> texture_data(entry.data_size);
         try {
+            GCC_ABI_WORKAROUND_START
             datafile.seekg(entry.offset);
             datafile.read(texture_data.data(), entry.data_size);
+            GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to read texture data: " << get_stream_error(datafile) << std::endl;
             throw exit_error(1);
@@ -149,7 +162,9 @@ void write_datafile(const std::string& filename, PegHeader& header)
     std::ofstream datafile;
     set_ios_exceptions(datafile);
     try {
+        GCC_ABI_WORKAROUND_START
         datafile.open(filename, OPENMODE_WRITE);
+        GCC_ABI_WORKAROUND_END
     } catch (std::ios::failure) {
         std::cerr << "[Error] Failed to open data file for writing: " << filename << std::endl;
         throw exit_error(1);
@@ -160,9 +175,11 @@ void write_datafile(const std::string& filename, PegHeader& header)
         // Write entry
 
         try {
+            GCC_ABI_WORKAROUND_START
             align(datafile, header.alignment);
             entry.offset = datafile.tellp();
             datafile.write(entry.data.data(), entry.data.size());
+            GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to write data file: " << get_stream_error(datafile) << std::endl;
             throw exit_error(1);

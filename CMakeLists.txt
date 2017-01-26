@@ -27,5 +27,14 @@ if (STATIC_BUILD)
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
 endif (STATIC_BUILD)
 
+set (GCC_ABI_WORKAROUND OFF CACHE BOOL "Fixes catching std::ios::failure")
+if (GCC_ABI_WORKAROUND)
+    add_definitions(-DGCC_ABI_WORKAROUND_ENABLED)
+    list (APPEND SOURCES
+        src/gcc/old_abi.cpp
+        src/gcc/new_abi.cpp
+    )
+endif (GCC_ABI_WORKAROUND)
+
 add_executable (${PROJECT_NAME} ${SOURCES})
 target_include_directories (${PROJECT_NAME} PRIVATE external)

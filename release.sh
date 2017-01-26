@@ -15,9 +15,15 @@ do
     rm -r -f "${BUILD_DIR}/${PLATFORM}"
     mkdir -p "${BUILD_DIR}/${PLATFORM}"
     cd "${BUILD_DIR}/${PLATFORM}"
-    
+
+    if [[ "${PLATFORM}" == win* ]]; then
+        PLATFORM_OPTIONS="${CMAKE_OPTIONS} -DGCC_ABI_WORKAROUND=ON"
+    else
+        PLATFORM_OPTIONS="${CMAKE_OPTIONS}"
+    fi
+
     TOOLCHAIN_FILE="${SOURCE_DIR}/cmake/toolchain-${PLATFORM}.cmake"
-    cmake ${SOURCE_DIR} ${CMAKE_OPTIONS} -DCMAKE_TOOLCHAIN_FILE="${TOOLCHAIN_FILE}"
+    cmake ${SOURCE_DIR} ${PLATFORM_OPTIONS} -DCMAKE_TOOLCHAIN_FILE="${TOOLCHAIN_FILE}"
     make -j "$(nproc)"
 done
 

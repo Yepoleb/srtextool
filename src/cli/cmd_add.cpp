@@ -11,6 +11,7 @@
 #include "../ddsfile.hpp"
 #include "../path.hpp"
 #include "../errors.hpp"
+#include "../gcc/abi_fix.hpp"
 #include "shared.hpp"
 
 void update_files(const std::vector<std::string>& dds_filenames, PegHeader& header);
@@ -151,7 +152,9 @@ void update_files(const std::vector<std::string>& dds_filenames, PegHeader& head
         std::ifstream ddsfile;
         set_ios_exceptions(ddsfile);
         try {
+            GCC_ABI_WORKAROUND_START
             ddsfile.open(dds_filename, OPENMODE_READ);
+            GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to open DDS file: " << dds_filename << std::endl;
             throw exit_error(1);
@@ -161,6 +164,7 @@ void update_files(const std::vector<std::string>& dds_filenames, PegHeader& head
 
         DDSHeader ddsheader;
         try {
+            GCC_ABI_WORKAROUND_START
             ddsheader.read(ddsfile);
 
             size_t data_size = get_file_size(ddsfile) - DDS_HEADER_SIZE - FOURCC_SIZE;
@@ -168,6 +172,7 @@ void update_files(const std::vector<std::string>& dds_filenames, PegHeader& head
             entry.data.resize(data_size);
             ddsfile.read(entry.data.data(), data_size);
             ddsfile.close();
+            GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {
             std::cerr << "[Error] Failed to read DDS file: " << get_stream_error(ddsfile) << std::endl;
             throw exit_error(1);

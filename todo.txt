@@ -8,6 +8,7 @@ Add header for cli commands
 Check texture sizes
 Status information when extracting
 Drag and drop batch files
+Fix duplicated m32 compiler flags
 
 Important:
 
