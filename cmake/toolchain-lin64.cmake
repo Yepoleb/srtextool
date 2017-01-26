@@ -9,9 +9,15 @@ set (CMAKE_C_COMPILER gcc)
 set (CMAKE_CXX_COMPILER g++)
 
 # set 64bit flags
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64" CACHE STRING "" FORCE)
-set (CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -m64" CACHE STRING "" FORCE)
-set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_C_FLAGS} -m64" CACHE STRING "" FORCE)
+if (NOT CMAKE_C_FLAGS MATCHES ".*-m64.*")
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64" CACHE STRING "" FORCE)
+endif ()
+if (NOT CMAKE_CXX_FLAGS MATCHES ".*-m64.*")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64" CACHE STRING "" FORCE)
+endif ()
+if (NOT CMAKE_EXE_LINKER_FLAGS MATCHES ".*-m64.*")
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -m64" CACHE STRING "" FORCE)
+endif ()
 
 # adjust the default behaviour of the FIND_XXX() commands:
 # search headers and libraries in the target environment, search 
