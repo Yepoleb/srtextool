@@ -8,16 +8,6 @@
 #include "../path.hpp"
 #include "shared.hpp"
 
-using commandtype = std::function<int(const std::string&, std::vector<std::string>::const_iterator, std::vector<std::string>::const_iterator)>;
-
-// Forward declare commands so I don't need a 10 lines header file
-
-int cmd_add(std::string progname, std::vector<std::string>::const_iterator beginargs, std::vector<std::string>::const_iterator endargs);
-int cmd_check(std::string progname, std::vector<std::string>::const_iterator beginargs, std::vector<std::string>::const_iterator endargs);
-int cmd_delete(std::string progname, std::vector<std::string>::const_iterator beginargs, std::vector<std::string>::const_iterator endargs);
-int cmd_extract(std::string progname, std::vector<std::string>::const_iterator beginargs, std::vector<std::string>::const_iterator endargs);
-int cmd_list(std::string progname, std::vector<std::string>::const_iterator beginargs, std::vector<std::string>::const_iterator endargs);
-
 static const char* HELP_MAIN =
 R"(
 SR Textool 1.0.1
