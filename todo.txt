@@ -1,7 +1,7 @@
 Create output directory if it doesn't exist
 Add flags command
 Autodetect alpha flag
-Warnings for weird conversions, verbose option
+Quiet option
 Remove duplicated cli code
 Check texture sizes
 Drag and drop batch files
