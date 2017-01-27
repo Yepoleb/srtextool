@@ -10,7 +10,7 @@
 
 static const char* HELP_MAIN =
 R"(
-SR Textool 1.0.1
+SR Textool 1.0.2
 
 Tool for converting DDS textures to and from the Volition bitmap format.
 
