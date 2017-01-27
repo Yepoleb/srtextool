@@ -11,6 +11,7 @@
 #include "../ddsfile.hpp"
 #include "../path.hpp"
 #include "../errors.hpp"
+#include "../common.hpp"
 #include "../gcc/abi_fix.hpp"
 #include "shared.hpp"
 
@@ -67,12 +68,12 @@ int cmd_add(std::string progname,
         return 1;
     }
     if (!(files_arg || input_arg)) {
-        std::cerr << "[Error] Files or input argument is missing" << std::endl;
+        errormsg() << "Files or input argument is missing" << std::endl;
         std::cerr << help_format(HELP_ADD, progname);
         return 1;
     }
     if (files_arg && input_arg) {
-        std::cerr << "[Error] Can't use files and input argument at the same time" << std::endl;
+        errormsg() << "Can't use files and input argument at the same time" << std::endl;
         std::cerr << help_format(HELP_ADD, progname);
         return 1;
     }
@@ -80,7 +81,7 @@ int cmd_add(std::string progname,
     std::string header_in_filename = args::get(header_arg);
     std::string data_in_filename = get_data_filename(header_in_filename);
     if (data_in_filename.empty()) {
-        std::cerr << "[Error] Invalid file extension" << std::endl;
+        errormsg() << "Invalid file extension" << std::endl;
         return 1;
     }
 
@@ -141,10 +142,13 @@ void update_files(const std::vector<std::string>& dds_filenames, PegHeader& head
         // Check if entry with the same name already exists
 
         size_t existing_index = header.entry_index(texture_name);
-        if (existing_index != SIZE_MAX) {
-            entry = header.entries.at(existing_index);
-        } else {
+        bool is_new = (existing_index == SIZE_MAX);
+        if (is_new) {
             entry.filename = texture_name;
+            infomsg() << "Adding " << entry.filename << std::endl;
+        } else {
+            entry = header.entries.at(existing_index);
+            infomsg() << "Updating " << entry.filename << std::endl;
         }
 
         // Open DDS file
@@ -156,7 +160,7 @@ void update_files(const std::vector<std::string>& dds_filenames, PegHeader& head
             ddsfile.open(dds_filename, OPENMODE_READ);
             GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {
-            std::cerr << "[Error] Failed to open DDS file: " << dds_filename << std::endl;
+            errormsg() << "Failed to open DDS file: " << dds_filename << std::endl;
             throw exit_error(1);
         }
 
@@ -174,11 +178,20 @@ void update_files(const std::vector<std::string>& dds_filenames, PegHeader& head
             ddsfile.close();
             GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {
-            std::cerr << "[Error] Failed to read DDS file: " << get_stream_error(ddsfile) << std::endl;
+            errormsg() << "Failed to read DDS file: " << get_stream_error(ddsfile) << std::endl;
             throw exit_error(1);
         } catch (const std::exception& e) {
-            std::cerr << "[Error] Failed to read DDS file: " << e.what() << std::endl;
+            errormsg() << "Failed to read DDS file: " << e.what() << std::endl;
             throw exit_error(1);
+        }
+
+        // Detect format change
+
+        TextureFormat dds_format = detect_pixelformat(ddsheader.ddspf);
+        if (!is_new && (dds_format != entry.bm_fmt)) {
+            warnmsg() << "New texture format doesn't match previous format" << std::endl;
+            warnmsg() << "Switching from " << get_format_name(entry.bm_fmt) <<
+                " to " << get_format_name(dds_format) << std::endl;
         }
 
         // Convert header
@@ -186,16 +199,16 @@ void update_files(const std::vector<std::string>& dds_filenames, PegHeader& head
         try {
             entry.update_dds(ddsheader);
         } catch (const std::exception& e) {
-            std::cerr << "[Error] Failed to convert DDS to PEG header: " << e.what() << std::endl;
+            errormsg() << "Failed to convert DDS to PEG header: " << e.what() << std::endl;
             throw exit_error(1);
         }
 
         // Insert new header and texture
 
-        if (existing_index != SIZE_MAX) {
-            header.entries.at(existing_index) = std::move(entry);
-        } else {
+        if (is_new) {
             header.add_entry(std::move(entry));
+        } else {
+            header.entries.at(existing_index) = std::move(entry);
         }
     }
 }

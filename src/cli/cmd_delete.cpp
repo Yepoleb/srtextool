@@ -8,6 +8,7 @@
 #include "../headerfile.hpp"
 #include "../path.hpp"
 #include "../errors.hpp"
+#include "../common.hpp"
 #include "shared.hpp"
 
 void delete_textures(const std::vector<std::string>& texture_names, PegHeader& header);
@@ -57,7 +58,7 @@ int cmd_delete(std::string progname,
         return 1;
     }
     if (!textures_arg) {
-        std::cerr << "[Error] Textures argument is missing" << std::endl;
+        errormsg() << "Textures argument is missing" << std::endl;
         std::cerr << help_format(HELP_DELETE, progname);
         return 1;
     }
@@ -65,7 +66,7 @@ int cmd_delete(std::string progname,
     std::string header_in_filename = args::get(header_arg);
     std::string data_in_filename = get_data_filename(header_in_filename);
     if (data_in_filename.empty()) {
-        std::cerr << "[Error] Invalid file extension" << std::endl;
+        errormsg() << "Invalid file extension" << std::endl;
         return 1;
     }
 
@@ -103,6 +104,11 @@ int cmd_delete(std::string progname,
 void delete_textures(const std::vector<std::string>& texture_names, PegHeader& header)
 {
     for (const std::string& name : texture_names) {
-        header.remove_entry(name);
+        bool success = header.remove_entry(name);
+        if (success) {
+            infomsg() << "Deleted " << name << std::endl;
+        } else {
+            warnmsg() << "Skipped " << name << ": Texture not found" << std::endl;
+        }
     }
 }

@@ -11,6 +11,7 @@
 #include "../ddsfile.hpp"
 #include "../path.hpp"
 #include "../errors.hpp"
+#include "../common.hpp"
 #include "../gcc/abi_fix.hpp"
 #include "shared.hpp"
 
@@ -28,8 +29,8 @@ Options:
   -h, --help                        Display this help menu
   -o [output], --output=[output]    Directory to write the files to
   header                            Header file ending with cvbm_pc or cpeg_pc
-  textures                          Texture names if you only want to extract certain
-                                    textures
+  textures                          Texture names if you only want to extract
+                                    certain textures
 
 )";
 
@@ -66,7 +67,7 @@ int cmd_extract(std::string progname,
     std::string header_filename = args::get(header_arg);
     std::string data_filename = get_data_filename(header_filename);
     if (data_filename.empty()) {
-        std::cerr << "[Error] Invalid file extension." << std::endl;
+        errormsg() << "Invalid file extension." << std::endl;
         return 1;
     }
 
@@ -88,6 +89,10 @@ int cmd_extract(std::string progname,
 void write_dds(const std::string& output_dir, const PegHeader& header,
     const std::vector<std::string>& texture_names)
 {
+    if (header.total_entries == 0) {
+        warnmsg() << "File contains no texture entries" << std::endl;
+    }
+
     for (const PegEntry& entry : header.entries) {
 
         // Filter entries, skip if names are empty
@@ -98,6 +103,8 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
                 continue;
             }
         }
+
+        infomsg() << "Extracting " << entry.filename << std::endl;
 
         // Make dds filename
 
@@ -113,7 +120,7 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
         try {
             ddsheader = entry.to_dds();
         } catch (const std::exception& e) {
-            std::cerr << "[Error] Failed to convert entry: " << e.what() << std::endl;
+            errormsg() << "Failed to convert entry: " << e.what() << std::endl;
             throw exit_error(1);
         }
 
@@ -126,7 +133,7 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
             ddsfile.open(dds_filepath, OPENMODE_WRITE);
             GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {
-            std::cerr << "[Error] Failed to open DDS file for writing: " << dds_filepath << std::endl;
+            errormsg() << "Failed to open DDS file for writing: " << dds_filepath << std::endl;
             throw exit_error(1);
         }
 
@@ -138,10 +145,10 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
             ddsfile.write(entry.data.data(), entry.data.size());
             GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {
-            std::cerr << "[Error] Failed to write DDS file: " << get_stream_error(ddsfile) << std::endl;
+            errormsg() << "Failed to write DDS file: " << get_stream_error(ddsfile) << std::endl;
             throw exit_error(1);
         } catch (const std::exception& e) {
-            std::cerr << "[Error] Failed to write DDS file: " << e.what() << std::endl;
+            errormsg() << "Failed to write DDS file: " << e.what() << std::endl;
             throw exit_error(1);
         }
     }

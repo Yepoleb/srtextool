@@ -7,6 +7,7 @@
 
 #include "../headerfile.hpp"
 #include "../errors.hpp"
+#include "../common.hpp"
 #include "shared.hpp"
 
 bool check_textures(const PegHeader& header);
@@ -56,7 +57,7 @@ int cmd_check(std::string progname,
     for (const std::string& header_filename : header_files) {
         std::string data_filename = get_data_filename(header_filename);
         if (data_filename.empty()) {
-            std::cerr << "[Error] Invalid file extension." << std::endl;
+            errormsg() << "Invalid file extension." << std::endl;
             continue;
         }
 
