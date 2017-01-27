@@ -54,18 +54,18 @@ TextureFormat detect_pixelformat(const DDSPixelformat& ddspf)
     for (size_t i = 0; i < PIXELFORMATS_SIZE; i++) {
         const DDSPixelformat& ddspf_ref = PIXELFORMATS[i];
 
-        if (ddspf.dwFlags != ddspf_ref.dwFlags) continue;
-        if (ddspf.dwFlags & DDPF_FOURCC) {
-            if (ddspf.dwFourCC != ddspf_ref.dwFourCC) continue;
+        if (ddspf.flags != ddspf_ref.flags) continue;
+        if (ddspf.flags & DDPF_FOURCC) {
+            if (ddspf.four_cc != ddspf_ref.four_cc) continue;
         }
-        if (ddspf.dwFlags & DDPF_RGB) {
-            if (ddspf.dwRGBBitCount != ddspf_ref.dwRGBBitCount) continue;
-            if (ddspf.dwRBitMask != ddspf_ref.dwRBitMask) continue;
-            if (ddspf.dwGBitMask != ddspf_ref.dwGBitMask) continue;
-            if (ddspf.dwBBitMask != ddspf_ref.dwBBitMask) continue;
+        if (ddspf.flags & DDPF_RGB) {
+            if (ddspf.rgb_bit_count != ddspf_ref.rgb_bit_count) continue;
+            if (ddspf.r_bitmask != ddspf_ref.r_bitmask) continue;
+            if (ddspf.g_bitmask != ddspf_ref.g_bitmask) continue;
+            if (ddspf.b_bitmask != ddspf_ref.b_bitmask) continue;
         }
-        if (ddspf.dwFlags & DDPF_ALPHAPIXELS) {
-            if (ddspf.dwABitMask != ddspf_ref.dwABitMask) continue;
+        if (ddspf.flags & DDPF_ALPHAPIXELS) {
+            if (ddspf.a_bitmask != ddspf_ref.a_bitmask) continue;
         }
 
         return static_cast<TextureFormat>(i + 400);
@@ -80,31 +80,31 @@ void DDSPixelformat::read(std::istream& stream)
 {
     ByteReader reader(stream);
 
-    dwSize = reader.readU32();
-    if (dwSize != DDS_PIXELFORMAT_SIZE) {
-        throw field_error("dwSize", std::to_string(dwSize));
+    size = reader.readU32();
+    if (size != DDS_PIXELFORMAT_SIZE) {
+        throw field_error("size", std::to_string(size));
     }
-    dwFlags = reader.readU32();
-    dwFourCC = reader.readU32();
-    dwRGBBitCount = reader.readU32();
-    dwRBitMask = reader.readU32();
-    dwGBitMask = reader.readU32();
-    dwBBitMask = reader.readU32();
-    dwABitMask = reader.readU32();
+    flags = reader.readU32();
+    four_cc = reader.readU32();
+    rgb_bit_count = reader.readU32();
+    r_bitmask = reader.readU32();
+    g_bitmask = reader.readU32();
+    b_bitmask = reader.readU32();
+    a_bitmask = reader.readU32();
 }
 
 void DDSPixelformat::write(std::ostream& stream) const
 {
     ByteWriter writer(stream);
 
-    writer.writeU32(dwSize);
-    writer.writeU32(dwFlags);
-    writer.writeU32(dwFourCC);
-    writer.writeU32(dwRGBBitCount);
-    writer.writeU32(dwRBitMask);
-    writer.writeU32(dwGBitMask);
-    writer.writeU32(dwBBitMask);
-    writer.writeU32(dwABitMask);
+    writer.writeU32(size);
+    writer.writeU32(flags);
+    writer.writeU32(four_cc);
+    writer.writeU32(rgb_bit_count);
+    writer.writeU32(r_bitmask);
+    writer.writeU32(g_bitmask);
+    writer.writeU32(b_bitmask);
+    writer.writeU32(a_bitmask);
 }
 
 
@@ -113,50 +113,50 @@ void DDSHeader::read(std::istream& stream)
 {
     ByteReader reader(stream);
 
-    dwSignature = reader.readU32();
-    if (dwSignature != FOURCC_DDS) {
-        throw field_error("dwSignature", std::string(reinterpret_cast<char*>(&dwSignature), 4));
+    signature = reader.readU32();
+    if (signature != FOURCC_DDS) {
+        throw field_error("signature", std::string(reinterpret_cast<char*>(&signature), 4));
     }
-    dwSize = reader.readU32();
-    if (dwSize != DDS_HEADER_SIZE) {
-        throw field_error("dwSize", std::to_string(dwSize));
+    size = reader.readU32();
+    if (size != DDS_HEADER_SIZE) {
+        throw field_error("size", std::to_string(size));
     }
-    dwFlags = reader.readU32();
-    dwHeight = reader.readU32();
-    dwWidth = reader.readU32();
-    dwPitchOrLinearSize = reader.readU32();
-    dwDepth = reader.readU32();
-    dwMipMapCount = reader.readU32();
-    for (size_t i = 0; i < ARRAYSIZE(dwReserved1); i++) {
-        dwReserved1[i] = reader.readU32();
+    flags = reader.readU32();
+    height = reader.readU32();
+    width = reader.readU32();
+    pitch_or_linear_size = reader.readU32();
+    depth = reader.readU32();
+    mipmap_count = reader.readU32();
+    for (size_t i = 0; i < ARRAYSIZE(reserved1); i++) {
+        reserved1[i] = reader.readU32();
     }
     ddspf.read(stream);
-    dwCaps = reader.readU32();
-    dwCaps2 = reader.readU32();
-    dwCaps3 = reader.readU32();
-    dwCaps4 = reader.readU32();
-    dwReserved2 = reader.readU32();
+    caps = reader.readU32();
+    caps2 = reader.readU32();
+    caps3 = reader.readU32();
+    caps4 = reader.readU32();
+    reserved2 = reader.readU32();
 }
 
 void DDSHeader::write(std::ostream& stream) const
 {
     ByteWriter writer(stream);
 
-    writer.writeU32(dwSignature);
-    writer.writeU32(dwSize);
-    writer.writeU32(dwFlags);
-    writer.writeU32(dwHeight);
-    writer.writeU32(dwWidth);
-    writer.writeU32(dwPitchOrLinearSize);
-    writer.writeU32(dwDepth);
-    writer.writeU32(dwMipMapCount);
-    for (size_t i = 0; i < ARRAYSIZE(dwReserved1); i++) {
-        writer.writeU32(dwReserved1[i]);
+    writer.writeU32(signature);
+    writer.writeU32(size);
+    writer.writeU32(flags);
+    writer.writeU32(height);
+    writer.writeU32(width);
+    writer.writeU32(pitch_or_linear_size);
+    writer.writeU32(depth);
+    writer.writeU32(mipmap_count);
+    for (size_t i = 0; i < ARRAYSIZE(reserved1); i++) {
+        writer.writeU32(reserved1[i]);
     }
     ddspf.write(stream);
-    writer.writeU32(dwCaps);
-    writer.writeU32(dwCaps2);
-    writer.writeU32(dwCaps3);
-    writer.writeU32(dwCaps4);
-    writer.writeU32(dwReserved2);
+    writer.writeU32(caps);
+    writer.writeU32(caps2);
+    writer.writeU32(caps3);
+    writer.writeU32(caps4);
+    writer.writeU32(reserved2);
 }

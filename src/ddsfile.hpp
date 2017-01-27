@@ -101,14 +101,14 @@ struct DDSPixelformat
     void read(std::istream& stream);
     void write(std::ostream& stream) const;
 
-    uint32_t dwSize; // Struct size, always 32
-    uint32_t dwFlags;
-    uint32_t dwFourCC; // Four character code for format identification
-    uint32_t dwRGBBitCount; // Bits per pixel
-    uint32_t dwRBitMask;
-    uint32_t dwGBitMask;
-    uint32_t dwBBitMask;
-    uint32_t dwABitMask;
+    uint32_t size; // Struct size, always 32
+    uint32_t flags;
+    uint32_t four_cc; // Four character code for format identification
+    uint32_t rgb_bit_count; // Bits per pixel
+    uint32_t r_bitmask;
+    uint32_t g_bitmask;
+    uint32_t b_bitmask;
+    uint32_t a_bitmask;
 };
 
 struct DDSHeader
@@ -116,19 +116,19 @@ struct DDSHeader
     void read(std::istream& stream);
     void write(std::ostream& stream) const;
 
-    uint32_t dwSignature = FOURCC_DDS; // Must be "DDS "
-    uint32_t dwSize = DDS_HEADER_SIZE; // Struct size, always 124
-    uint32_t dwFlags = DDSD_REQUIRED;
-    uint32_t dwHeight = 0;
-    uint32_t dwWidth = 0;
-    uint32_t dwPitchOrLinearSize = 0;
-    uint32_t dwDepth = 0;
-    uint32_t dwMipMapCount = 1;
-    uint32_t dwReserved1[11] = {};
+    uint32_t signature = FOURCC_DDS; // Must be "DDS "
+    uint32_t size = DDS_HEADER_SIZE; // Struct size, always 124
+    uint32_t flags = DDSD_REQUIRED;
+    uint32_t height = 0;
+    uint32_t width = 0;
+    uint32_t pitch_or_linear_size = 0;
+    uint32_t depth = 0;
+    uint32_t mipmap_count = 1;
+    uint32_t reserved1[11] = {};
     DDSPixelformat ddspf = {};
-    uint32_t dwCaps = DDSCAPS_TEXTURE;
-    uint32_t dwCaps2 = 0;
-    uint32_t dwCaps3 = 0;
-    uint32_t dwCaps4 = 0;
-    uint32_t dwReserved2 = 0;
+    uint32_t caps = DDSCAPS_TEXTURE;
+    uint32_t caps2 = 0;
+    uint32_t caps3 = 0;
+    uint32_t caps4 = 0;
+    uint32_t reserved2 = 0;
 };

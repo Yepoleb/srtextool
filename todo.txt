@@ -5,7 +5,6 @@ Warnings for weird conversions, verbose option
 Remove duplicated cli code
 Check texture sizes
 Drag and drop batch files
-Remove dw from dds structs
 
 Important:
 

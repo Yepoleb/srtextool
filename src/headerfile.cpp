@@ -245,11 +245,11 @@ void PegEntry::write(std::ostream& stream) const
 
 void PegEntry::update_dds(const DDSHeader& ddsheader)
 {
-    width = static_cast<uint16_t>(ddsheader.dwWidth);
-    height = static_cast<uint16_t>(ddsheader.dwHeight);
+    width = static_cast<uint16_t>(ddsheader.width);
+    height = static_cast<uint16_t>(ddsheader.height);
     bm_fmt = detect_pixelformat(ddsheader.ddspf);
-    if (ddsheader.dwMipMapCount > 1) {
-        mip_levels = static_cast<uint8_t>(ddsheader.dwMipMapCount);
+    if (ddsheader.mipmap_count > 1) {
+        mip_levels = static_cast<uint8_t>(ddsheader.mipmap_count);
     } else {
         mip_levels = 1;
     }
@@ -258,13 +258,13 @@ void PegEntry::update_dds(const DDSHeader& ddsheader)
 DDSHeader PegEntry::to_dds() const
 {
     DDSHeader dds_header;
-    dds_header.dwHeight = height;
-    dds_header.dwWidth = width;
+    dds_header.height = height;
+    dds_header.width = width;
 
     if (mip_levels > 1) {
-        dds_header.dwFlags |= DDSD_MIPMAPCOUNT;
-        dds_header.dwMipMapCount = mip_levels;
-        dds_header.dwCaps |= DDSCAPS_COMPLEX | DDSCAPS_MIPMAP;
+        dds_header.flags |= DDSD_MIPMAPCOUNT;
+        dds_header.mipmap_count = mip_levels;
+        dds_header.caps |= DDSCAPS_COMPLEX | DDSCAPS_MIPMAP;
     }
 
     dds_header.ddspf = get_pixelformat(bm_fmt);
@@ -272,19 +272,19 @@ DDSHeader PegEntry::to_dds() const
     // Calculate pitch
     switch (bm_fmt) {
     case TextureFormat::PC_DXT1:
-        dds_header.dwFlags |= DDSD_LINEARSIZE;
-        dds_header.dwPitchOrLinearSize = calc_compressed_size(width, height, 8);
+        dds_header.flags |= DDSD_LINEARSIZE;
+        dds_header.pitch_or_linear_size = calc_compressed_size(width, height, 8);
         break;
     case TextureFormat::PC_DXT3:
     case TextureFormat::PC_DXT5:
-        dds_header.dwFlags |= DDSD_LINEARSIZE;
-        dds_header.dwPitchOrLinearSize = calc_compressed_size(width, height, 16);
+        dds_header.flags |= DDSD_LINEARSIZE;
+        dds_header.pitch_or_linear_size = calc_compressed_size(width, height, 16);
         break;
     default:
-        if (dds_header.ddspf.dwRGBBitCount > 0) {
-            dds_header.dwFlags |= DDSD_PITCH;
-            dds_header.dwPitchOrLinearSize =
-                (width * dds_header.ddspf.dwRGBBitCount + 7) / 8;
+        if (dds_header.ddspf.rgb_bit_count > 0) {
+            dds_header.flags |= DDSD_PITCH;
+            dds_header.pitch_or_linear_size =
+                (width * dds_header.ddspf.rgb_bit_count + 7) / 8;
         } else {
             throw field_error("format", std::to_string(static_cast<int>(bm_fmt)));
         }
