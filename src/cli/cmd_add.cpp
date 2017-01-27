@@ -187,11 +187,25 @@ void update_files(const std::vector<std::string>& dds_filenames, PegHeader& head
 
         // Detect format change
 
-        TextureFormat dds_format = detect_pixelformat(ddsheader.ddspf);
-        if (!is_new && (dds_format != entry.bm_fmt)) {
-            warnmsg() << "New texture format doesn't match previous format" << std::endl;
-            warnmsg() << "Switching from " << get_format_name(entry.bm_fmt) <<
-                " to " << get_format_name(dds_format) << std::endl;
+        if (!is_new) {
+            TextureFormat dds_format = detect_pixelformat(ddsheader.ddspf);
+            if (dds_format != entry.bm_fmt) {
+                warnmsg() << "New texture format doesn't match previous format" << std::endl;
+                warnmsg() << "Switching from " << get_format_name(entry.bm_fmt) <<
+                    " to " << get_format_name(dds_format) << std::endl;
+            }
+
+            if ((ddsheader.width != entry.width) || (ddsheader.height != entry.height)) {
+                warnmsg() << "Changing dimensions from " <<
+                    entry.width << "x" << entry.height << " to " <<
+                    ddsheader.width << "x" << ddsheader.height << std::endl;
+            }
+
+            if (ddsheader.mipmap_count != entry.mip_levels) {
+                warnmsg() << "Changing mip level from " <<
+                    static_cast<int>(entry.mip_levels) << " to " <<
+                    ddsheader.mipmap_count << std::endl;
+            }
         }
 
         // Convert header
