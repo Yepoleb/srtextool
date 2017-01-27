@@ -116,9 +116,9 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
 
         // Convert to DDS header
 
-        DDSHeader ddsheader;
+        DDSHeader dds_header;
         try {
-            ddsheader = entry.to_dds();
+            dds_header = entry.to_dds();
         } catch (const std::exception& e) {
             errormsg() << "Failed to convert entry: " << e.what() << std::endl;
             throw exit_error(1);
@@ -141,7 +141,7 @@ void write_dds(const std::string& output_dir, const PegHeader& header,
 
         try {
             GCC_ABI_WORKAROUND_START
-            ddsheader.write(ddsfile);
+            dds_header.write(ddsfile);
             ddsfile.write(entry.data.data(), entry.data.size());
             GCC_ABI_WORKAROUND_END
         } catch (std::ios::failure) {

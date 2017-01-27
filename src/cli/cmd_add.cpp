@@ -166,10 +166,10 @@ void update_files(const std::vector<std::string>& dds_filenames, PegHeader& head
 
         // Read header and texture data
 
-        DDSHeader ddsheader;
+        DDSHeader dds_header;
         try {
             GCC_ABI_WORKAROUND_START
-            ddsheader.read(ddsfile);
+            dds_header.read(ddsfile);
 
             size_t data_size = get_file_size(ddsfile) - DDS_HEADER_SIZE - FOURCC_SIZE;
             entry.data_size = static_cast<uint32_t>(data_size);
@@ -188,30 +188,30 @@ void update_files(const std::vector<std::string>& dds_filenames, PegHeader& head
         // Detect format change
 
         if (!is_new) {
-            TextureFormat dds_format = detect_pixelformat(ddsheader.ddspf);
+            TextureFormat dds_format = detect_pixelformat(dds_header.ddspf);
             if (dds_format != entry.bm_fmt) {
                 warnmsg() << "New texture format doesn't match previous format" << std::endl;
                 warnmsg() << "Switching from " << get_format_name(entry.bm_fmt) <<
                     " to " << get_format_name(dds_format) << std::endl;
             }
 
-            if ((ddsheader.width != entry.width) || (ddsheader.height != entry.height)) {
+            if ((dds_header.width != entry.width) || (dds_header.height != entry.height)) {
                 warnmsg() << "Changing dimensions from " <<
                     entry.width << "x" << entry.height << " to " <<
-                    ddsheader.width << "x" << ddsheader.height << std::endl;
+                    dds_header.width << "x" << dds_header.height << std::endl;
             }
 
-            if (ddsheader.mipmap_count != entry.mip_levels) {
+            if (dds_header.mipmap_count != entry.mip_levels) {
                 warnmsg() << "Changing mip level from " <<
                     static_cast<int>(entry.mip_levels) << " to " <<
-                    ddsheader.mipmap_count << std::endl;
+                    dds_header.mipmap_count << std::endl;
             }
         }
 
         // Convert header
 
         try {
-            entry.update_dds(ddsheader);
+            entry.update_dds(dds_header);
         } catch (const std::exception& e) {
             errormsg() << "Failed to convert DDS to PEG header: " << e.what() << std::endl;
             throw exit_error(1);

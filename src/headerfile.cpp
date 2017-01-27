@@ -243,13 +243,13 @@ void PegEntry::write(std::ostream& stream) const
     writer.writeU64(0); // padding
 }
 
-void PegEntry::update_dds(const DDSHeader& ddsheader)
+void PegEntry::update_dds(const DDSHeader& dds_header)
 {
-    width = static_cast<uint16_t>(ddsheader.width);
-    height = static_cast<uint16_t>(ddsheader.height);
-    bm_fmt = detect_pixelformat(ddsheader.ddspf);
-    if (ddsheader.mipmap_count > 1) {
-        mip_levels = static_cast<uint8_t>(ddsheader.mipmap_count);
+    width = static_cast<uint16_t>(dds_header.width);
+    height = static_cast<uint16_t>(dds_header.height);
+    bm_fmt = detect_pixelformat(dds_header.ddspf);
+    if (dds_header.mipmap_count > 1) {
+        mip_levels = static_cast<uint8_t>(dds_header.mipmap_count);
     } else {
         mip_levels = 1;
     }

@@ -51,7 +51,7 @@ struct PegEntry
 {
     void read(std::istream& stream);
     void write(std::ostream& stream) const;
-    void update_dds(const DDSHeader& ddsheader);
+    void update_dds(const DDSHeader& dds_header);
     DDSHeader to_dds() const;
 
     int64_t offset = 0; // File position of texture data
