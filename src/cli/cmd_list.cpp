@@ -86,7 +86,8 @@ std::string list_header(const PegHeader& header)
         stream << "Dimensions: " << entry.width << "x" << entry.height << std::endl;
         stream << "Format: " << get_format_name(entry.bm_fmt) << std::endl;
         if (entry.flags) {
-            stream << "Flags: " << get_entry_flag_names(entry.flags) << std::endl;
+            stream << "Flags: " << get_entry_flag_names(entry.flags) <<
+                " (0x" << std::hex << entry.flags << std::dec << ")" << std::endl;
         }
         if (entry.mip_levels > 1) {
             stream << "Mip levels: " << static_cast<int>(entry.mip_levels) << std::endl;
