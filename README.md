@@ -48,20 +48,35 @@ Update everything in the current directory
 srtextool a professorgenki.cpeg_pc -i .
 ```
 
+Create a new cpeg file
+```
+srtextool a new.cpeg_pc new_texture.tga.dds
+```
+
 Linux only: Update all textures matching `*.dds`
 ```
 srtextool a professorgenki.cpeg_pc *.dds
 ```
 
-Note: Textures with an alpha channel currently can't be added properly,
-because they require the `BM_F_ALPHA` flag to be set. This will be changed
-in a future version and doesn't affect updating already existing textures.
+Note: New textures with an alpha channel require the `BM_F_ALPHA` flag to be set. This can be done using the modify command. Existing textures already have it and don't need to be modified.
 
 ### Delete textures
 
 Delete `new_texture.tga.dds`
 ```
 srtextool d professorgenki.cpeg_pc new_texture.tga.dds
+```
+
+### Modify texture
+
+Change name of `new_texture.tga` to `new_texture2.tga`
+```
+srtextool m professorgenki.cpeg_pc new_texture.tga -n new_texture2.tga
+```
+
+Set alpha flag. A complete list of flags can be found in the [Peg file format] thread.
+```
+srtextool m professorgenki.cpeg_pc new_texture.tga -f 0x1
 ```
 
 ### List contents
@@ -121,7 +136,7 @@ do the same as for [Linux](#linux), but replace `cmake ..` with
 
 ## Credits
 
-* \[V\] Knobby for providing the headers of the [peg file format]
+* \[V\] Knobby for providing the headers of the [Peg file format]
 * Scanti for writing the [SR3 Texture Utilities], which were a great starting
   point
 
@@ -134,6 +149,6 @@ do the same as for [Linux](#linux), but replace `cmake ..` with
 
 [CMake]: https://cmake.org/
 [args]: https://github.com/Taywee/args
-[peg file format]: https://www.saintsrowmods.com/forum/threads/peg-file-format.2908/
+[Peg file format]: https://www.saintsrowmods.com/forum/threads/peg-file-format.2908/
 [SR3 Texture Utilities]: https://www.saintsrowmods.com/forum/threads/sr3-texture-utilities.566/
 
