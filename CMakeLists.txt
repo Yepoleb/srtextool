@@ -15,6 +15,7 @@ set (SOURCES
     src/cli/cmd_delete.cpp
     src/cli/cmd_extract.cpp
     src/cli/cmd_list.cpp
+    src/cli/cmd_modify.cpp
     src/cli/main.cpp
     src/cli/shared.cpp
     src/ddsfile.cpp

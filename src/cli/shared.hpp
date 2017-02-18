@@ -28,6 +28,7 @@ int cmd_check(std::string progname, std::vector<std::string>::const_iterator beg
 int cmd_delete(std::string progname, std::vector<std::string>::const_iterator beginargs, std::vector<std::string>::const_iterator endargs);
 int cmd_extract(std::string progname, std::vector<std::string>::const_iterator beginargs, std::vector<std::string>::const_iterator endargs);
 int cmd_list(std::string progname, std::vector<std::string>::const_iterator beginargs, std::vector<std::string>::const_iterator endargs);
+int cmd_modify(std::string progname, std::vector<std::string>::const_iterator beginargs, std::vector<std::string>::const_iterator endargs);
 
 inline void set_ios_exceptions(std::ios& stream)
 {

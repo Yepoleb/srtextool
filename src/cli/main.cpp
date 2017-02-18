@@ -31,6 +31,7 @@ Commands:
   a: Add or update textures
   l: List header fields and entries
   d: Delete textures
+  m: Modify texture properties
   c: Check texture for errors
 
 )";
@@ -42,6 +43,7 @@ int main(int argc, char** argv)
         {"a", cmd_add},
         {"l", cmd_list},
         {"d", cmd_delete},
+        {"m", cmd_modify},
         {"c", cmd_check}
     };
 

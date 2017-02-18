@@ -93,7 +93,7 @@ struct PegHeader
     uint32_t dir_block_size = 0; // Size of the header file.
     uint32_t data_block_size = 0; // Size of the data file.
     uint16_t num_bitmaps = 0; // Number of bitmaps in container.
-    uint16_t flags = 0; // Various flags. Always 0?
+    uint16_t flags = 0; // Various flags. Always 0
     uint16_t total_entries = 0; // Number of entries in container. Same as num_bitmaps.
     uint16_t alignment = 16; // Always 16 for the PC.
     std::vector<PegEntry> entries;

@@ -1,5 +1,4 @@
 Create output directory if it doesn't exist
-Add flags command
 Autodetect alpha flag
 Quiet option
 Remove duplicated cli code
