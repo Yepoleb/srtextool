@@ -101,11 +101,15 @@ int cmd_add(std::string progname,
 
     PegHeader header;
 
-    try {
-        header = read_headerfile(header_in_filename);
-        read_datafile(data_in_filename, header);
-    } catch (const exit_error& e) {
-        return e.status;
+    if (path::exists(header_in_filename)) {
+        try {
+            header = read_headerfile(header_in_filename);
+            read_datafile(data_in_filename, header);
+        } catch (const exit_error& e) {
+            return e.status;
+        }
+    } else {
+        infomsg() << "Input file does not exist, creating a new one" << std::endl;
     }
 
     std::vector<std::string> dds_filenames;
