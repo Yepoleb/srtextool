@@ -4,14 +4,14 @@ set -e # Exit if something fails
 
 SOURCE_DIR="$(pwd)"
 BUILD_DIR="${SOURCE_DIR}/build"
+CMAKE_OPTIONS="-DSTATIC_BUILD=ON -DCMAKE_BUILD_TYPE=Release"
+INCLUDE_EXTRAS="LICENSE LICENSE-GPLv3 README.md"
 
 if [[ $1 ]]; then
     VERSION="$1"
 else
     VERSION="dev"
 fi
-
-CMAKE_OPTIONS="-DSTATIC_BUILD=ON -DCMAKE_BUILD_TYPE=Release"
 
 mkdir -p "${BUILD_DIR}"
 for PLATFORM in lin32 lin64 win32 win64;
@@ -33,9 +33,20 @@ do
 done
 
 cd "${BUILD_DIR}"
-rm -f "srtextool-${VERSION}-lin.tar.gz srtextool-${VERSION}-win.zip"
+rm -f "srtextool-${VERSION}-lin.tar.gz" "srtextool-${VERSION}-win.zip" "srtextool-${VERSION}-src.zip"
+
+for EXTRA in $INCLUDE_EXTRAS;
+do
+    cp "../${EXTRA}" "${EXTRA}"
+done
+
 echo "Packaging Linux binaries"
-tar -czf "srtextool-${VERSION}-lin.tar.gz" "lin32/srtextool" "lin64/srtextool"
+tar -czf "srtextool-${VERSION}-lin.tar.gz" "lin32/srtextool" "lin64/srtextool" $INCLUDE_EXTRAS
+
 echo "Packaging Windows binaries"
-zip "srtextool-${VERSION}-win.zip" "win32/srtextool.exe" "win64/srtextool.exe"
+zip "srtextool-${VERSION}-win.zip" "win32/srtextool.exe" "win64/srtextool.exe" $INCLUDE_EXTRAS
+
+echo "Packaging source"
+cd "${SOURCE_DIR}"
+git archive -o "${BUILD_DIR}/srtextool-${VERSION}-src.zip" "master"
 
