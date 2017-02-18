@@ -2,6 +2,12 @@
 #include <stddef.h>
 #include <string>
 
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <sys/stat.h>
+#endif
+
 namespace path
 {
 
@@ -62,5 +68,20 @@ inline std::string join(const std::string& path1, const std::string& path2)
     std::string path2_strip = rstrip(path2, PATH_SEPARATORS);
     return path1_strip + PRIMARY_SEPARATOR + path2_strip;
 }
+
+#ifdef _WIN32
+inline bool exists(const std::string& filename)
+{
+    uint32_t attributes = GetFileAttributes(filename.c_str());
+    return (attributes != 0xFFFFFFFF);
+}
+#else
+inline bool exists(const std::string& filename)
+{
+    struct stat buffer;
+    int error = stat(filename.c_str(), &buffer);
+    return (error == 0);
+}
+#endif
 
 } // namespace path
